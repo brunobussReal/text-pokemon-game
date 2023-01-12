@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 
 interface PokemonGameProps { }
 
-interface CharacterState {
+export interface CharacterState {
   x: number,
   y: number,
   caughtPokemon: number,
   visitedHouses: Set<string>
 }
+//----------------------------------------------------------------
+
 
 const PokemonGame: React.FC<PokemonGameProps> = (props) => {
   const [charState, setCharState] = useState<CharacterState>({
@@ -22,33 +24,43 @@ const PokemonGame: React.FC<PokemonGameProps> = (props) => {
     let caughtPokemon = 0;
     let visitedHouses = new Set<string>();
     let x = 0, y = 0;
+    let currentPosition = `${x},${y}`;
+
+    //Get pokemon from initial house
+    visitedHouses.add(currentPosition);
+    caughtPokemon++;
+
 
     for (let move of sequence) {
       move = move.toUpperCase()
       console.log(visitedHouses)
-      let currentPosition = `${x},${y}`;
+
+      switch (move) {
+        case "N":
+          y = y - 1;
+          break;
+        case "S":
+          y = y + 1;
+          break;
+        case "E":
+          x = x + 1;
+          break;
+        case "W":
+          x = x - 1;
+          break;
+        default:
+          break;
+      }
+      
+      //Set new position
+      currentPosition = `${x},${y}`;
       if (visitedHouses.has(currentPosition)) {
         continue;
       }
-
+      //Store position on the position Set
       visitedHouses.add(currentPosition);
       caughtPokemon++;
-      switch (move) {
-        case "N":
-            y = y - 1;
-            break;
-        case "S":
-            y = y + 1;
-            break;
-        case "E":
-            x = x + 1;
-            break;
-        case "W":
-            x = x - 1;
-            break;
-        default:
-            break;
-    }}
+    }
 
     setCharState({
       x,
@@ -60,11 +72,11 @@ const PokemonGame: React.FC<PokemonGameProps> = (props) => {
 
   return (
     <div>
-        <label>
-          Sequence of moves:
-          <input type="text" onChange={event => setSequence(event.target.value)} />
-        </label>
-        <input type="submit" onClick={() => handleMovement(sequence)} />
+      <label>
+        Sequence of moves:
+        <input type="text" onChange={event => setSequence(event.target.value)} />
+      </label>
+      <input alt='Submit' type="submit" onClick={() => handleMovement(sequence)} />
       <p>Current position: X: {charState.x}, Y: {charState.y}</p>
       <p>Caught Pokemon: {charState.caughtPokemon}</p>
       <p>
