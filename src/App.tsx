@@ -1,10 +1,10 @@
 import React from 'react';
-import PokemonGame from './components/PokemonGame';
+import TextCommandPokemonGame from './components/TextCommandPokemonGame';
 function App() {
 
   return (
-    <div>
-      <PokemonGame/>
+    <div className="flex p-6" >
+      <TextCommandPokemonGame/>
     </div>
   );
 }

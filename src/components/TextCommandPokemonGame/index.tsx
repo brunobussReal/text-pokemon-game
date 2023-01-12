@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-interface PokemonGameProps { }
+interface TextCommandPokemonGameProps { }
 
 export interface CharacterState {
   x: number,
@@ -10,8 +10,7 @@ export interface CharacterState {
 }
 //----------------------------------------------------------------
 
-
-const PokemonGame: React.FC<PokemonGameProps> = (props) => {
+const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) => {
   const [charState, setCharState] = useState<CharacterState>({
     x: 0,
     y: 0,
@@ -30,11 +29,8 @@ const PokemonGame: React.FC<PokemonGameProps> = (props) => {
     visitedHouses.add(currentPosition);
     caughtPokemon++;
 
-
     for (let move of sequence) {
       move = move.toUpperCase()
-      console.log(visitedHouses)
-
       switch (move) {
         case "N":
           y = y - 1;
@@ -51,7 +47,7 @@ const PokemonGame: React.FC<PokemonGameProps> = (props) => {
         default:
           break;
       }
-      
+
       //Set new position
       currentPosition = `${x},${y}`;
       if (visitedHouses.has(currentPosition)) {
@@ -62,30 +58,27 @@ const PokemonGame: React.FC<PokemonGameProps> = (props) => {
       caughtPokemon++;
     }
 
+    //Update state
     setCharState({
-      x,
-      y,
-      caughtPokemon,
-      visitedHouses
+      x, y, caughtPokemon, visitedHouses
     })
   }
 
   return (
-    <div>
-      <label>
-        Sequence of moves:
-        <input type="text" onChange={event => setSequence(event.target.value)} />
-      </label>
-      <input alt='Submit' type="submit" onClick={() => handleMovement(sequence)} />
-      <p>Current position: X: {charState.x}, Y: {charState.y}</p>
-      <p>Caught Pokemon: {charState.caughtPokemon}</p>
-      <p>
-        {charState.visitedHouses.has(`${charState.x},${charState.y}`)
-          ? "No Pokemon here. Ash already caught one here"
-          : "There is a Pokemon here"}
-      </p>
+    <div className="text-sm font-medium text-zinc-600 w-full flex items-center justify-center h-72">
+      <div>
+        <div className="flex items-end w-full">
+          <label className="text-sm font-medium text-zinc-600" >
+            Sequence of moves:
+            <input className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
+          </label>
+          <button className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
+        </div>
+        <p>Current position: X: {charState.x}, Y: {charState.y}</p>
+        <p>Caught Pokemon: {charState.caughtPokemon}</p>
+      </div>
     </div>
   );
 }
 
-export default PokemonGame;
+export default TextCommandPokemonGame;
