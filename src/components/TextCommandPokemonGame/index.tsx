@@ -68,7 +68,7 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
       visitedHouses.add(currentPosition);
       caughtPokemon++;
     }
-    const pokemons = await catchMultipleRandomPokemons(caughtPokemon)
+    const pokemons = await catchMultipleRandomPokemons(caughtPokemon,151)
     //Update state
     setCharState({
       x, y, caughtPokemon, visitedHouses, pokemons
@@ -76,25 +76,25 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
   }
 
   return (
-    <div className="text-sm font-medium text-zinc-600 w-full flex items-center justify-center">
-      <div>
-        <div className="flex items-end w-full">
-          <label className="text-sm font-medium text-zinc-600" >
-            Sequence of moves:
-            <input className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
-          </label>
-          <button className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
+    <div className="text-sm font-medium text-zinc-600 w-full flex flex-col items-center justify-center">
+        <div>
+          <div className="flex items-end w-full">
+            <label className="text-sm font-medium text-zinc-600" >
+              Sequence of moves:
+              <input className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
+            </label>
+            <button className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
+          </div>
+          <p>Current position: X: {charState.x}, Y: {charState.y}</p>
+          <p>Caught Pokemon: {charState.caughtPokemon}</p>
+          <p className="text-base font-semibold mb-2" >Pokemons:</p>
         </div>
-        <p>Current position: X: {charState.x}, Y: {charState.y}</p>
-        <p>Caught Pokemon: {charState.caughtPokemon}</p>
-        <p className="text-base font-semibold mb-2" >Pokemons:</p>
-
-        <div >
+        <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 "  >
           {charState.pokemons.map((pkm) => (
             <div className="flex w-full items-center" >
-              <img src={pkm.sprites.front_default} alt={pkm.name} />
-              <div>
-                <p>{pkm.name}</p>
+              <img src={pkm.sprites.versions["generation-iii"].emerald.front_default} alt={pkm.name} />
+              <div className="ml-2">
+                <p className="capitalize font-bold" >{pkm.name}</p>
                 {pkm.types.map((type: any) => (
                   <p>
                     {type.type.name}
@@ -105,7 +105,6 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
             </div>
           ))}
         </div>
-      </div>
 
     </div>
   );
