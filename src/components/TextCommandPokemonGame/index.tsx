@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import * as PokeApi from 'pokeapi-js-wrapper';
+import { usePokemon } from '../../hooks/usePokemon';
 
 interface TextCommandPokemonGameProps { }
 
@@ -6,20 +8,28 @@ export interface CharacterState {
   x: number,
   y: number,
   caughtPokemon: number,
+  pokemons: any[]
   visitedHouses: Set<string>
 }
 //----------------------------------------------------------------
+const customOptions = {
+  cache: true,
+  // cacheImages: true
+}
+const pokedex = new PokeApi.Pokedex(customOptions)
 
 const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) => {
   const [charState, setCharState] = useState<CharacterState>({
     x: 0,
     y: 0,
     caughtPokemon: 0,
+    pokemons: [],
     visitedHouses: new Set<string>()
   });
   const [sequence, setSequence] = useState("");
+  const { catchMultipleRandomPokemons } = usePokemon()
 
-  const handleMovement = (sequence: string) => {
+  const handleMovement = async (sequence: string) => {
     let caughtPokemon = 0;
     let visitedHouses = new Set<string>();
     let x = 0, y = 0;
@@ -31,12 +41,13 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
 
     for (let move of sequence) {
       move = move.toUpperCase()
+      console.log(visitedHouses)
       switch (move) {
         case "N":
-          y = y - 1;
+          y = y + 1;
           break;
         case "S":
-          y = y + 1;
+          y = y - 1;
           break;
         case "E":
           x = x + 1;
@@ -57,15 +68,15 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
       visitedHouses.add(currentPosition);
       caughtPokemon++;
     }
-
+    const pokemons = await catchMultipleRandomPokemons(caughtPokemon)
     //Update state
     setCharState({
-      x, y, caughtPokemon, visitedHouses
+      x, y, caughtPokemon, visitedHouses, pokemons
     })
   }
 
   return (
-    <div className="text-sm font-medium text-zinc-600 w-full flex items-center justify-center h-72">
+    <div className="text-sm font-medium text-zinc-600 w-full flex items-center justify-center">
       <div>
         <div className="flex items-end w-full">
           <label className="text-sm font-medium text-zinc-600" >
@@ -76,7 +87,26 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
         <p>Caught Pokemon: {charState.caughtPokemon}</p>
+        <p className="text-base font-semibold mb-2" >Pokemons:</p>
+
+        <div >
+          {charState.pokemons.map((pkm) => (
+            <div className="flex w-full items-center" >
+              <img src={pkm.sprites.front_default} alt={pkm.name} />
+              <div>
+                <p>{pkm.name}</p>
+                {pkm.types.map((type: any) => (
+                  <p>
+                    {type.type.name}
+                  </p>
+                ))}
+              </div>
+
+            </div>
+          ))}
+        </div>
       </div>
+
     </div>
   );
 }
