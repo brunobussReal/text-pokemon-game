@@ -4,6 +4,9 @@ import { usePokemon } from '../../hooks/usePokemon';
 import { useSpring, animated } from 'react-spring';
 import "./styles.css"
 import house from "../../assets/House.png"
+import charIdle from "../../assets/char_idle.png"
+
+import { GRID_LENGTH } from '../../constants';
 
 interface SimplePokemonGameProps { }
 
@@ -27,17 +30,8 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
   });
   const [sequence, setSequence] = useState("");
   const { catchMultipleRandomPokemons } = usePokemon()
-  const itemRefs = useRef(Array.from({ length: 25 }, () => createRef<HTMLDivElement>()));
+  const itemRefs = useRef(Array.from({ length: GRID_LENGTH }, () => createRef<HTMLDivElement>()));
   const gridRef = useRef<HTMLDivElement>(null)
-  const [animationProps, setAnimationProps] = useSpring(() => ({
-    x: 0,
-    y: 0,
-    config: { mass: 1, tension: 280, friction: 120, duration: 200 },
-    onRest: () => {
-      moveToNextPosition()
-    }
-  }));
-
   const [gridPosition, SetGridPosition] = useState({ x: -100, y: -100 })
 
   const [gridProps, setGridProps] = useSpring(() => ({
@@ -70,10 +64,10 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
           y = y - 100;
           break;
         case "E":
-          x = x + 100;
+          x = x - 100;
           break;
         case "W":
-          x = x - 100;
+          x = x + 100;
           break;
         default:
           break;
@@ -121,13 +115,13 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
 
     const rectGrid = gridRef.current ? gridRef.current.getBoundingClientRect() : null
 
-    Array.from({ length: 25 }, (_, i) => i + 1).map((_, index) => {
+    Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((_, index) => {
       if (itemRefs.current[index].current && rectGrid) {
         //@ts-ignore
         const rect = itemRefs.current[index].current.getBoundingClientRect();
         // console.log(rect.left, rect.top, rect.right, rect.bottom, {x:rect.x}, {y:rect.y})
 
-        if (rect.x -  rectGrid.x < -100) {
+        if (rect.x - rectGrid.x < -100) {
           //@ts-ignore
           itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) + 500}%`
           return
@@ -172,8 +166,11 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y - 100)}>Move Up</button>
         <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y + 100)}>Move Down</button>
         <div id="outer_div" className="relative w-[300px] h-[300px] overflow-hidden">
+          <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
+            <img src={charIdle} alt="Pkm Trainer" className="w-full h-full" />
+          </div>
           <div ref={gridRef} className="grid-container relative -z-10 w-[500px] h-[500px]  ">
-            {Array.from({ length: 25 }, (_, i) => i + 1).map((n, index) => (
+            {Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((n, index) => (
               <animated.div
                 ref={itemRefs.current[index]}
                 id="item"
@@ -182,10 +179,9 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
                   transform: gridProps.transform,
                   left: "0%",
                   top: "0%",
-                  backgroundColor: n === 2 ? "gray" : "bg-green-400"
                 }}
                 key={"row1" + n}>
-                <img className="w-2/3 h-2/3" src={house} alt="house" />
+                <img className="w-2/3 h-2/3 z-40" src={house} alt="house" />
               </animated.div>
             ))}
           </div>
