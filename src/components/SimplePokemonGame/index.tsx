@@ -5,7 +5,7 @@ import { useSpring, animated } from 'react-spring';
 import "./styles.css"
 import house from "../../assets/House.png"
 import charIdle from "../../assets/char_idle.png"
-
+import charMoving from "../../assets/char_moving.png"
 import { GRID_LENGTH } from '../../constants';
 
 interface SimplePokemonGameProps { }
@@ -13,6 +13,7 @@ interface SimplePokemonGameProps { }
 export interface CharacterState {
   x: number,
   y: number,
+  isMoving: boolean,
   caughtPokemon: number,
   pokemons: any[]
   visitedHouses: Set<string>
@@ -24,6 +25,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
   const [charState, setCharState] = useState<CharacterState>({
     x: 0,
     y: 0,
+    isMoving: false,
     caughtPokemon: 0,
     pokemons: [],
     visitedHouses: new Set<string>()
@@ -95,14 +97,18 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     // const pokemons = await catchMultipleRandomPokemons(caughtPokemon, 151)
     //Update character state
     setCharState({
-      x, y, caughtPokemon, visitedHouses, pokemons: []
+      x, y, isMoving:true, caughtPokemon, visitedHouses, pokemons: []
     })
   }
 
   const moveToNextPosition = () => {
     // Get the next position from the array
     locationsArray.shift();
-    if (locationsArray.length === 0) return; // If there are no more positions, stop the animation
+    if (locationsArray.length === 0) {
+     // If there are no more positions, stop the animation
+     setCharState((char) => ({...char, isMoving:false}))
+     return
+    }
     // setAnimationProps({ x: locationsArray[0].x, y: locationsArray[0].y });
     moveGrid(locationsArray[0].x, locationsArray[0].y)
   }
@@ -167,7 +173,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y + 100)}>Move Down</button>
         <div id="outer_div" className="relative w-[300px] h-[300px] overflow-hidden">
           <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
-            <img src={charIdle} alt="Pkm Trainer" className="w-full h-full" />
+            <img src={charState.isMoving ? charMoving : charIdle} alt="Pkm Trainer" className="w-full h-full" />
           </div>
           <div ref={gridRef} className="grid-container relative -z-10 w-[500px] h-[500px]  ">
             {Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((n, index) => (
