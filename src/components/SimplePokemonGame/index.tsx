@@ -1,5 +1,4 @@
 import React, { createRef, useEffect, useRef, useState } from 'react';
-import * as PokeApi from 'pokeapi-js-wrapper';
 import { usePokemon } from '../../hooks/usePokemon';
 import { useSpring, animated } from 'react-spring';
 import "./styles.css"
@@ -94,10 +93,10 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
       transform: `translate(${locationsArray[0].x}%, ${locationsArray[0].y}%)`,
     });
     //fetch random pokemons
-    // const pokemons = await catchMultipleRandomPokemons(caughtPokemon, 151)
+    const pokemons = await catchMultipleRandomPokemons(caughtPokemon, 151)
     //Update character state
     setCharState({
-      x, y, isMoving:true, caughtPokemon, visitedHouses, pokemons: []
+      x, y, isMoving:true, caughtPokemon, visitedHouses, pokemons
     })
   }
 
@@ -166,11 +165,6 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
         <p>Caught Pokemon: {charState.caughtPokemon}</p>
-
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x - 100, gridPosition.y)}>Move Left</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x + 100, gridPosition.y)}>Move Right</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y - 100)}>Move Up</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y + 100)}>Move Down</button>
         <div id="outer_div" className="relative w-[300px] h-[300px] overflow-hidden">
           <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
             <img src={charState.isMoving ? charMoving : charIdle} alt="Pkm Trainer" className="w-full h-full" />
