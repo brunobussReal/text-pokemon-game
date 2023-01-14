@@ -1,15 +1,44 @@
+/** 
+ * *This is a React functional component that renders a simple game where a character 
+ * *can move around a grid and catch Pokemons. 
+ * *The game is controlled by a string of moves ("N", "S", "E", "W") that the user can input.
+ *
+ * The component has a @handleMovement function that takes in a string of moves as an argument. 
+ * It uses this string to calculate the new position of the character, fetch random Pokemon, 
+ * and animate the movement of the grid items.
+ *
+ * The component also has a @moveToNextPosition function that is called when the animation is complete.
+ * It is used to move the character to the next position on the grid.
+ *
+ * The component also has a @moveGrid function that is used to animate the grid items. 
+ * When the grid items move out of the visible area, the component should remove it from the grid 
+ * and render it again on the opposite direction.
+*/
+//-----------------------------------------------------------------------------
+
+// react
 import React, { createRef, useRef, useState } from 'react';
-import { usePokemon } from '../../hooks/usePokemon';
+// libraries
 import { useSpring, animated } from 'react-spring';
+// components
+import { usePokemon } from '../../hooks/usePokemon';
+// style & assets
 import "./styles.css"
 import house from "../../assets/House.png"
 import charIdle from "../../assets/char_idle.png"
 import charMoving from "../../assets/char_moving.png"
+// constants
 import { GRID_LENGTH, GRID_SIZE } from '../../constants';
+//-----------------------------------------------------------------------------
 
 interface SimplePokemonGameProps { }
 
 export interface CharacterState {
+  /**
+   * Manage the state of the character, including its current position, 
+   * whether it is moving or not, the number of caught Pokemon, 
+   * and the Pokemons caught.
+   */
   x: number,
   y: number,
   isMoving: boolean,
@@ -17,10 +46,20 @@ export interface CharacterState {
   pokemons: any[]
   visitedHouses: Set<string>
 }
-//----------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// array that will store the grid position to be used on the grid animation
 let locationsArray = [] as any
+//-----------------------------------------------------------------------------
 
+// Component
 const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
+  // Custom hooks
+  const { catchMultipleRandomPokemons } = usePokemon()
+  // React hooks
+  const itemRefs = useRef(Array.from({ length: GRID_LENGTH }, () => createRef<HTMLDivElement>()));
+  const gridRef = useRef<HTMLDivElement>(null)
+  const [sequence, setSequence] = useState("");
+  const [gridPosition, SetGridPosition] = useState({ x: -100, y: -100 })
   const [charState, setCharState] = useState<CharacterState>({
     x: 0,
     y: 0,
@@ -29,12 +68,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     pokemons: [],
     visitedHouses: new Set<string>()
   });
-  const [sequence, setSequence] = useState("");
-  const { catchMultipleRandomPokemons } = usePokemon()
-  const itemRefs = useRef(Array.from({ length: GRID_LENGTH }, () => createRef<HTMLDivElement>()));
-  const gridRef = useRef<HTMLDivElement>(null)
-  const [gridPosition, SetGridPosition] = useState({ x: -100, y: -100 })
-
+  // Animation hooks
   const [gridProps, setGridProps] = useSpring(() => ({
     transform: "translate(-100%, -100%)",
     config: { mass: 1, tension: 280, friction: 120, duration: 200 },
@@ -43,18 +77,22 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
       moveToNextPosition()
     }
   }));
+  //---------------------------------------------------------
 
   const handleMovement = async (sequence: string) => {
+    // Initial values
     let caughtPokemon = 0;
+    locationsArray = []
+    // a set with visited houses position
     let visitedHouses = new Set<string>();
+    // set "x" and "y" based on current grid position
     let x = gridPosition.x, y = gridPosition.y;
     let currentPosition = `${x},${y}`;
-    locationsArray = []
     //Get pokemon from initial house
     visitedHouses.add(currentPosition);
-    // locationsArray.push({ x, y })
     caughtPokemon++;
 
+    // Loop through move sequence and update the initial values
     for (let move of sequence) {
       move = move.toUpperCase()
       switch (move) {
@@ -74,88 +112,87 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
           break;
       }
 
-      //Set new position
+      // set new position
       currentPosition = `${x},${y}`;
       locationsArray.push({ x, y })
 
       if (visitedHouses.has(currentPosition)) {
-        continue;
+        continue; // Skip
       }
 
-      //Store position on the position Set and Increase number of caught pokemons
+      // store position on the position Set and increase number of caught pokemons
       visitedHouses.add(currentPosition);
       caughtPokemon++;
-    }
+    } // End loop
 
     // start animation movement
-    moveGrid(locationsArray[0].x,locationsArray[0].y)
-
-    //fetch random pokemons
+    moveGrid(locationsArray[0].x, locationsArray[0].y)
+    //fetch random pokemons from the custom hook
     const pokemons = await catchMultipleRandomPokemons(caughtPokemon, 151)
     //Update character state
     setCharState({
       x, y, isMoving: true, caughtPokemon, visitedHouses, pokemons
     })
-    // moveToNextPosition()
   }
 
   const moveToNextPosition = () => {
     // Get the next position from the array
+    // remove value from index 0
     locationsArray.shift();
     if (locationsArray.length === 0) {
       // If there are no more positions, stop the animation
-      console.log("stop")
       setCharState((char) => ({ ...char, isMoving: false }))
       return
     }
-    // setAnimationProps({ x: locationsArray[0].x, y: locationsArray[0].y });
     moveGrid(locationsArray[0].x, locationsArray[0].y)
   }
 
   const moveGrid = (x: number, y: number) => {
+    // update current grid position state
     SetGridPosition({ x, y });
+    // update grid animation props
     setGridProps({
       transform: `translate(${x}%, ${y}%)`,
     });
-
+    // grid position reference
     const rectGrid = gridRef.current ? gridRef.current.getBoundingClientRect() : null
-    //@ts-ignore
-    const rect = itemRefs.current[0].current.getBoundingClientRect();
-    //@ts-ignore
-    console.log(rect.x - rectGrid.x, rect.y - rectGrid.y,)
 
+    /**
+     * Map through all grid elements (houses) references
+     * When the grid item move out of the visible area it is rendered on the opposite direction
+     */
     Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((_, index) => {
       if (itemRefs.current[index].current && rectGrid) {
-        //@ts-ignore
+        //@ts-ignore ignoring index value
         const rect = itemRefs.current[index].current.getBoundingClientRect();
-        // console.log(rect.left, rect.top, rect.right, rect.bottom, {x:rect.x}, {y:rect.y})
 
         if (rect.x - rectGrid.x < -100) {
-          //@ts-ignore
+          //@ts-ignore ignoring index value
           itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) + 500}%`
           return
         }
 
         if (rect.x - rectGrid.x > 300) {
-          //@ts-ignore
+          //@ts-ignore ignoring index value
           itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) - 500}%`
           return
         }
 
         if (rect.y - rectGrid.y < -100) {
-          //@ts-ignore
+          //@ts-ignore ignoring index value
           itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) + 500}%`
           return
         }
 
         if (rect.y - rectGrid.y > 300) {
-          //@ts-ignore
+          //@ts-ignore ignoring index value
           itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) - 500}%`
           return
         }
       }
     })
   }
+  //---------------------------------------------------------
 
   return (
     <div className="text-sm font-medium text-zinc-600 w-full flex flex-col items-center justify-center">
@@ -169,16 +206,13 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
         <p>Caught Pokemon: {charState.caughtPokemon}</p>
-
-        {/* <button className="m-2" onClick={() => moveGrid(gridPosition.x - 100, gridPosition.y)}>Move Left</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x + 100, gridPosition.y)}>Move Right</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y - 100)}>Move Up</button>
-        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y + 100)}>Move Down</button> */}
-
+        {/* Map */}
         <div id="outer_div" className={`relative w-[300px] h-[300px] overflow-hidden`}>
+          {/* Character */}
           <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
             <img src={charState.isMoving ? charMoving : charIdle} alt="Pkm Trainer" className="w-full h-full" />
           </div>
+          {/* Grid Houses */}
           <animated.div ref={gridRef} className={`grid-container relative -z-10`}>
             {Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((_, index) => (
               <animated.div
@@ -199,6 +233,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         </div>
         <p className="text-base font-semibold mb-2" >Pokemons:</p>
       </div>
+      {/* Pokemon list */}
       <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 "  >
         {!charState.isMoving && charState.pokemons.map((pkm, index) => (
           <div key={"pkm" + index} className="flex w-full items-center" >
