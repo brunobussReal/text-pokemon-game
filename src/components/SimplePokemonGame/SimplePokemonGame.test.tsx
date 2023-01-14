@@ -6,6 +6,10 @@ import SimplePokemonGame from '.';
 // }));
 
 describe('<SimplePokemonGame />', () => {
+  afterAll(() => {
+    jest.clearAllTimers()
+  });
+
   it('should handle movement correctly', async () => {
     // Arrange
     const sequence = 'NSEW';
@@ -17,7 +21,7 @@ describe('<SimplePokemonGame />', () => {
     fireEvent.change(input, { target: { value: sequence } });
     await act(async () => {
       fireEvent.click(button);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     });
 
     // Assert
@@ -36,7 +40,7 @@ describe('<SimplePokemonGame />', () => {
     fireEvent.change(input, { target: { value: sequence } });
     await act(async () => {
       fireEvent.click(button);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     });
 
     // Assert

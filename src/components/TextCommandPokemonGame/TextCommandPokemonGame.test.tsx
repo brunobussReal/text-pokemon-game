@@ -2,6 +2,10 @@ import { act, fireEvent, render } from '@testing-library/react';
 import TextCommandPokemonGame from '.';
 
 describe('handleMovement', () => {
+  afterAll(() => {
+    jest.clearAllTimers()
+  });
+
   it('should correctly update the state on input change', async () => {
     // Arrange
     const { getByTestId, getByText, } = render(<TextCommandPokemonGame />);
@@ -12,7 +16,7 @@ describe('handleMovement', () => {
     fireEvent.change(input, { target: { value: 'E' } });
     await act(async () => {
       fireEvent.click(button);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     });
 
     // Assert
@@ -30,7 +34,7 @@ describe('handleMovement', () => {
     fireEvent.change(input, { target: { value: 'NESW' } });
     await act(async () => {
       fireEvent.click(button);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     });
 
     // Assert
@@ -48,7 +52,7 @@ describe('handleMovement', () => {
     fireEvent.change(input, { target: { value: 'NSNSNSNSNSNS' } });
     await act(async () => {
       fireEvent.click(button);
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 300));
     });
 
     // Assert

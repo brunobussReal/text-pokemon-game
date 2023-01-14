@@ -1,12 +1,21 @@
 import React from 'react';
-import SimplePokemonGame from './components/SimplePokemonGame';
-import TextCommandPokemonGame from './components/TextCommandPokemonGame';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+} from "react-router-dom";
+import { Home } from './pages/Home';
+import { Map } from './pages/Map';
 function App() {
 
   return (
-    <div className="flex p-6" >
-      <TextCommandPokemonGame/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/map" element={<Map />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
