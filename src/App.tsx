@@ -5,7 +5,7 @@ function App() {
 
   return (
     <div className="flex p-6" >
-      <SimplePokemonGame/>
+      <TextCommandPokemonGame/>
     </div>
   );
 }

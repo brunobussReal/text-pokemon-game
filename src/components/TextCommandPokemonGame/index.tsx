@@ -101,12 +101,12 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
         <div className="flex items-end w-full">
           <label className="text-sm font-medium text-zinc-600" >
             Sequence of moves:
-            <input className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
+            <input data-testid="sequence-input" className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
           </label>
-          <button className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
+          <button data-testid="move-button" className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
-        <p>Caught Pokemon: {charState.caughtPokemon}</p>
+        <p data-testid="caught-pokemons" >Caught Pokemon: {charState.caughtPokemon}</p>
         <p className="text-base font-semibold mb-2" >Pokemons:</p>
       </div>
       {/* Pokemon list */}

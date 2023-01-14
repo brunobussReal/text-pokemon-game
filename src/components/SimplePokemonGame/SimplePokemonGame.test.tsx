@@ -1,9 +1,9 @@
 import { render, fireEvent, act } from '@testing-library/react';
 import SimplePokemonGame from '.';
 
-jest.mock('../../hooks/usePokemon', () => ({
-  catchMultipleRandomPokemons: jest.fn(() => Promise.resolve([])),
-}));
+// jest.mock('../../hooks/usePokemon', () => ({
+//   catchMultipleRandomPokemons: jest.fn(() => Promise.resolve([])),
+// }));
 
 describe('<SimplePokemonGame />', () => {
   it('should handle movement correctly', async () => {
@@ -15,7 +15,10 @@ describe('<SimplePokemonGame />', () => {
 
     // Act
     fireEvent.change(input, { target: { value: sequence } });
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    });
 
     // Assert
     const charPosition = getByTestId('char-position').textContent;
@@ -31,7 +34,10 @@ describe('<SimplePokemonGame />', () => {
 
     // Act
     fireEvent.change(input, { target: { value: sequence } });
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    });
 
     // Assert
     const caughtPokemonValue = getByTestId('caught-pokemons').textContent;
