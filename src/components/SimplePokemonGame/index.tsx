@@ -20,7 +20,7 @@
 import React, { createRef, useRef, useState } from 'react';
 // libraries
 import { useSpring, animated } from 'react-spring';
-// components
+// components & hooks
 import { usePokemon } from '../../hooks/usePokemon';
 // style & assets
 import "./styles.css"
@@ -49,6 +49,11 @@ export interface CharacterState {
 //-----------------------------------------------------------------------------
 // array that will store the grid position to be used on the grid animation
 let locationsArray = [] as any
+// Character position offset: used to calculate character final position
+const CHAR_OFFSET = {
+  x: 200,
+  y:200
+}
 //-----------------------------------------------------------------------------
 
 // Component
@@ -131,7 +136,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     const pokemons = await catchMultipleRandomPokemons(caughtPokemon, 151)
     //Update character state
     setCharState({
-      x, y, isMoving: true, caughtPokemon, visitedHouses, pokemons
+      x: x + CHAR_OFFSET.x, y: y + CHAR_OFFSET.y, isMoving: true, caughtPokemon, visitedHouses, pokemons
     })
   }
 
@@ -197,15 +202,16 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
   return (
     <div className="text-sm font-medium text-zinc-600 w-full flex flex-col items-center justify-center">
       <div>
+      {/* Command block */}
         <div className="flex items-end w-full">
           <label className="text-sm font-medium text-zinc-600" >
             Sequence of moves:
-            <input className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
+            <input data-testid="sequence-input" className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
           </label>
-          <button className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
+          <button data-testid="move-button" className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
         </div>
-        <p>Current position: X: {charState.x}, Y: {charState.y}</p>
-        <p>Caught Pokemon: {charState.caughtPokemon}</p>
+        <p data-testid="char-position" >Current position: X: {charState.x}, Y: {charState.y}</p>
+        <p data-testid="caught-pokemons" >Caught Pokemon: {charState.caughtPokemon}</p>
         {/* Map */}
         <div id="outer_div" className={`relative w-[300px] h-[300px] overflow-hidden`}>
           {/* Character */}
