@@ -1,11 +1,11 @@
-import React, { createRef, useEffect, useRef, useState } from 'react';
+import React, { createRef, useRef, useState } from 'react';
 import { usePokemon } from '../../hooks/usePokemon';
 import { useSpring, animated } from 'react-spring';
 import "./styles.css"
 import house from "../../assets/House.png"
 import charIdle from "../../assets/char_idle.png"
 import charMoving from "../../assets/char_moving.png"
-import { GRID_LENGTH } from '../../constants';
+import { GRID_LENGTH, GRID_SIZE } from '../../constants';
 
 interface SimplePokemonGameProps { }
 
@@ -88,7 +88,6 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     }
 
     // start animation movement
-    // setAnimationProps({ x: locationsArray[0].x, y: locationsArray[0].y });
     setGridProps({
       transform: `translate(${locationsArray[0].x}%, ${locationsArray[0].y}%)`,
     });
@@ -128,25 +127,25 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
 
         if (rect.x - rectGrid.x < -100) {
           //@ts-ignore
-          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) + 500}%`
+          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) + GRID_SIZE}%`
           return
         }
 
-        if (rect.x - rectGrid.x > 300) {
+        if (rect.x - rectGrid.x > GRID_SIZE - 200) {
           //@ts-ignore
-          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) - 500}%`
+          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) - GRID_SIZE}%`
           return
         }
 
         if (rect.y - rectGrid.y < -100) {
           //@ts-ignore
-          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) + 500}%`
+          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) + GRID_SIZE}%`
           return
         }
 
-        if (rect.y - rectGrid.y > 300) {
+        if (rect.y - rectGrid.y > GRID_SIZE - 200) {
           //@ts-ignore
-          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) - 500}%`
+          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) - GRID_SIZE}%`
           return
         }
       }
@@ -165,11 +164,11 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
         <p>Caught Pokemon: {charState.caughtPokemon}</p>
-        <div id="outer_div" className="relative w-[300px] h-[300px] overflow-hidden">
+        <div id="outer_div" className={`relative w-[${GRID_SIZE-200}px] h-[${GRID_SIZE-200}px] overflow-hidden`}>
           <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
             <img src={charState.isMoving ? charMoving : charIdle} alt="Pkm Trainer" className="w-full h-full" />
           </div>
-          <div ref={gridRef} className="grid-container relative -z-10 w-[500px] h-[500px]  ">
+          <div ref={gridRef} className="grid-container relative -z-10  ">
             {Array.from({ length: GRID_LENGTH }, (_, i) => i + 1).map((n, index) => (
               <animated.div
                 ref={itemRefs.current[index]}
