@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { createRef, useEffect, useRef, useState } from 'react';
 import * as PokeApi from 'pokeapi-js-wrapper';
 import { usePokemon } from '../../hooks/usePokemon';
 import { useSpring, animated } from 'react-spring';
+import "./styles.css"
+import house from "../../assets/House.png"
 
 interface SimplePokemonGameProps { }
 
@@ -25,6 +27,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
   });
   const [sequence, setSequence] = useState("");
   const { catchMultipleRandomPokemons } = usePokemon()
+  const itemRefs = useRef(Array.from({ length: 25 }, () => createRef<HTMLDivElement>()));
 
   const [animationProps, setAnimationProps] = useSpring(() => ({
     x: 0,
@@ -33,6 +36,14 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     onRest: () => {
       moveToNextPosition()
     }
+  }));
+
+  const [gridPosition, SetGridPosition] = useState({ x: -100, y: -100 })
+
+  const [gridProps, setGridProps] = useSpring(() => ({
+    transform: "translate(-100%, -100%)",
+    config: { mass: 1, tension: 280, friction: 120, duration: 200 },
+    y: 0,
   }));
 
   const handleMovement = async (sequence: string) => {
@@ -93,6 +104,46 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     locationsArray.shift();
     if (locationsArray.length === 0) return; // If there are no more positions, stop the animation
     setAnimationProps({ x: locationsArray[0].x, y: locationsArray[0].y });
+    moveGrid(locationsArray[0].x, locationsArray[0].y)
+  }
+
+  const moveGrid = (x: number, y: number) => {
+    SetGridPosition({ x, y });
+    setGridProps({
+      transform: `translate(${x}%, ${y}%)`,
+    });
+
+    Array.from({ length: 25 }, (_, i) => i + 1).map((_, index) => {
+      if (itemRefs.current[index].current) {
+        //@ts-ignore
+        const rect = itemRefs.current[index].current.getBoundingClientRect();
+        // console.log(rect.left, rect.top, rect.right, rect.bottom, {x:rect.x}, {y:rect.y})
+
+        if (rect.x < 100) {
+          //@ts-ignore
+          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) + 500}%`
+          return
+        }
+
+        if (rect.x > 500) {
+          //@ts-ignore
+          itemRefs.current[index].current.style.left = `${Number(itemRefs.current[index].current.style.left.slice(0, -1)) - 500}%`
+          return
+        }
+
+        if (rect.y < 60) {
+          //@ts-ignore
+          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) + 500}%`
+          return
+        }
+
+        if (rect.y > 500) {
+          //@ts-ignore
+          itemRefs.current[index].current.style.top = `${Number(itemRefs.current[index].current.style.top.slice(0, -1)) - 500}%`
+          return
+        }
+      }
+    })
   }
 
   return (
@@ -107,21 +158,39 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
         </div>
         <p>Current position: X: {charState.x}, Y: {charState.y}</p>
         <p>Caught Pokemon: {charState.caughtPokemon}</p>
-        <div className="w-full bg-green-600 h-72">
-          <animated.div style={animationProps}>
-            Ash
+
+        <button className="m-2" onClick={() => moveGrid(gridPosition.x - 100, gridPosition.y)}>Move Left</button>
+        <button className="m-2" onClick={() => moveGrid(gridPosition.x + 100, gridPosition.y)}>Move Right</button>
+        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y - 100)}>Move Up</button>
+        <button className="m-2" onClick={() => moveGrid(gridPosition.x, gridPosition.y + 100)}>Move Down</button>
+        <div id="outer_div" className="relative w-[300px] h-[300px] overflow-hidden">
+          <animated.div className="grid-container relative -z-10 ">
+            {Array.from({ length: 25 }, (_, i) => i + 1).map((n, index) => (
+              <animated.div
+                ref={itemRefs.current[index]}
+                id="item"
+                className={`grid-item relative w-[100px] h-[100px] z-20 flex items-center justify-center bg-green-400`}
+                style={{
+                  transform: gridProps.transform,
+                  left: "0%",
+                  top: "0%"
+                }}
+                key={"row1" + n}>
+                <img className="w-2/3 h-2/3" src={house} alt="house" />
+              </animated.div>
+            ))}
           </animated.div>
         </div>
         <p className="text-base font-semibold mb-2" >Pokemons:</p>
       </div>
       <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 "  >
         {charState.pokemons.map((pkm, index) => (
-          <div key={pkm.id + index} className="flex w-full items-center" >
+          <div key={"pkm" + index} className="flex w-full items-center" >
             <img src={pkm.sprites.versions["generation-iii"].emerald.front_default} alt={pkm.name} />
             <div className="ml-2">
               <p className="capitalize font-bold" >{pkm.name}</p>
               {pkm.types.map((type: any) => (
-                <p key={type.type.name} >
+                <p key={`${pkm.id}${type.type.name}`} >
                   {type.type.name}
                 </p>
               ))}
@@ -135,3 +204,6 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
 }
 
 export default SimplePokemonGame;
+
+
+
