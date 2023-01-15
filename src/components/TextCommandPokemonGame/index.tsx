@@ -114,8 +114,8 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
       </div>
       {/* Pokemon list */}
       <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 "  >
-        {charState.pokemons.map((pkm) => (
-          <div className="flex w-full items-center bg-emerald-500 rounded-lg p-2" >
+        {charState.pokemons.map((pkm, index) => (
+          <div key={"pkm" + index} className="flex w-full items-center bg-emerald-500 rounded-lg p-2" >
             <img src={pkm.sprites.versions["generation-iii"].emerald.front_default} alt={pkm.name} />
             <div className="ml-2">
               <p className="capitalize font-bold" >{pkm.name}</p>
