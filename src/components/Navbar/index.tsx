@@ -1,23 +1,36 @@
+/**
+ * Navigation component with 2 links buttons to:
+ * @Version_I (http://localhost:3000/home)
+ * @Version_II (http://localhost:3000/version-ii)
+ * 
+ */
+//------------------------------------------------------------------------------
+
+// libraries 
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
+//------------------------------------------------------------------------------
 
 interface NavbarProps {
+  /**
+   * Empty props
+   */
 }
 
+// navigation props
 const navigation = [
   { name: 'Version I', href: '/', current: true },
   { name: 'Version II', href: '/version-ii', current: false },
 ]
 
+// help function
 function classNames(...classes: any ) {
   return classes.filter(Boolean).join(' ')
 }
 
+// Component
 export function Navbar({ }: NavbarProps) {
-
   return (
     <header className="sticky top-0 bg-white  z-50 shadow-xl shadow-blue-600/20" >
       <Disclosure as="nav" className="bg-slate-50 ">

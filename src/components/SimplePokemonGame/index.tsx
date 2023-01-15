@@ -251,7 +251,7 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
             <div className="ml-2">
               <p className="capitalize font-bold" >{pkm.name}</p>
               {pkm.types.map((type: any, index:any) => (
-                <p key={index} className="capitalize " >
+                <p key={"type" + index} className="capitalize " >
                   {type.type.name}
                 </p>
               ))}

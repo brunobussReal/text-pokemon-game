@@ -119,8 +119,8 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
             <img src={pkm.sprites.versions["generation-iii"].emerald.front_default} alt={pkm.name} />
             <div className="ml-2">
               <p className="capitalize font-bold" >{pkm.name}</p>
-              {pkm.types.map((type: any) => (
-                <p className="capitalize " >
+              {pkm.types.map((type: any, index:any) => (
+                <p key={"type" + index} className="capitalize " >
                   {type.type.name}
                 </p>
               ))}

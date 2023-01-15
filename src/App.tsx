@@ -1,14 +1,17 @@
-import React from 'react';
+// libraries
 import {
   BrowserRouter,
   Routes,
   Route,
 } from "react-router-dom";
+// components
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
 import { Version_ii } from './pages/Version_ii';
-function App() {
+//----------------------------------------------------------------
 
+// Component
+function App() {
   return (
     <BrowserRouter>
       <Navbar/>
