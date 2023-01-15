@@ -13,7 +13,7 @@ import { Version_ii } from './pages/Version_ii';
 // Component
 function App() {
   return (
-    <BrowserRouter basename="/" >
+    <BrowserRouter basename="/text-pokemon-game" >
       <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />

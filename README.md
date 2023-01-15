@@ -1,7 +1,7 @@
 # Text Based Pokemon Game
 
 Pokemon game controlled by a string of moves ("N", "S", "E", "W") that the user can input.
-You can check project demo [Here](https://).
+You can check project demo [Here](https://brunobussreal.github.io/text-pokemon-game).
 
 ## Getting Started
 
