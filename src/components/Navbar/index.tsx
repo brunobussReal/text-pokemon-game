@@ -1,6 +1,5 @@
-import { Fragment, ReactNode } from 'react';
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Disclosure } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import {
   Link,
 } from "react-router-dom";
@@ -10,7 +9,7 @@ interface NavbarProps {
 
 const navigation = [
   { name: 'Version I', href: '/', current: true },
-  { name: 'Version II', href: 'map', current: false },
+  { name: 'Version II', href: '/version-ii', current: false },
 ]
 
 function classNames(...classes: any ) {
@@ -81,7 +80,7 @@ export function Navbar({ }: NavbarProps) {
                     as="a"
                     href={item.href}
                     className={classNames(
-                      item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                      'text-gray-500 hover:bg-indigo-500 hover:text-white',
                       'block px-3 py-2 rounded-md text-base font-medium'
                     )}
                     aria-current={item.current ? 'page' : undefined}

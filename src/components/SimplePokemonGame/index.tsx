@@ -203,17 +203,20 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
     <div className="text-sm font-medium text-zinc-600 w-full flex flex-col items-center justify-center">
       <div>
       {/* Command block */}
-        <div className="flex items-end w-full">
+      <div className="container flex flex-col items-center" >
+        <div className="flex items-end">
           <label className="text-sm font-medium text-zinc-600" >
             Sequence of moves:
-            <input data-testid="sequence-input" className="block h-10 w-full px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
+            <input data-testid="sequence-input" className="block h-10 md:w-80 sm:w-72 px-2 rounded-md border-indigo-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm " type="text" onChange={event => setSequence(event.target.value)} />
           </label>
           <button data-testid="move-button" className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
         </div>
-        <p data-testid="char-position" >Current position: X: {charState.x}, Y: {charState.y}</p>
-        <p data-testid="caught-pokemons" >Caught Pokemon: {charState.caughtPokemon}</p>
-        {/* Map */}
-        <div id="outer_div" className={`relative w-[300px] h-[300px] overflow-hidden`}>
+        <div className="flex w-full md:gap-20 gap-10 justify-center my-2" >
+        <p>Current position: X: {charState.x}, Y: {charState.y}</p>
+        <p data-testid="caught-pokemons" className="" >Caught Pokemon: {charState.caughtPokemon}</p>
+        </div>
+       {/* Map */}
+       <div id="outer_div" className={`relative w-[300px] h-[300px] overflow-hidden my-4`}>
           {/* Character */}
           <div className="absolute w-10 h-10 -ml-5 -mt-5 left-1/2 top-1/2 flex items-center justify-center" >
             <img src={charState.isMoving ? charMoving : charIdle} alt="Pkm Trainer" className="w-full h-full" />
@@ -229,7 +232,6 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
                   transform: gridProps.transform,
                   left: "0%",
                   top: "0%",
-                  backgroundColor: index === 2 ? "gray" : "bg-green-400"
                 }}
                 key={"row1" + index}>
                 <img className="w-2/3 h-2/3 z-40" src={house} alt="house" />
@@ -237,17 +239,19 @@ const SimplePokemonGame: React.FC<SimplePokemonGameProps> = (props) => {
             ))}
           </animated.div>
         </div>
-        <p className="text-base font-semibold mb-2" >Pokemons:</p>
       </div>
-      {/* Pokemon list */}
-      <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 "  >
-        {!charState.isMoving && charState.pokemons.map((pkm, index) => (
-          <div key={"pkm" + index} className="flex w-full items-center" >
+   
+        <p className="text-base font-semibold mb-2 text-center" >Pokemons:</p>
+      </div>
+    {/* Pokemon list */}
+    <div className="grid sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 "  >
+        {charState.pokemons.map((pkm) => (
+          <div key={pkm.id} className="flex w-full items-center bg-emerald-500 rounded-lg p-2" >
             <img src={pkm.sprites.versions["generation-iii"].emerald.front_default} alt={pkm.name} />
             <div className="ml-2">
               <p className="capitalize font-bold" >{pkm.name}</p>
-              {pkm.types.map((type: any) => (
-                <p key={`${pkm.id}${type.type.name}`} >
+              {pkm.types.map((type: any, index:any) => (
+                <p key={index} className="capitalize " >
                   {type.type.name}
                 </p>
               ))}

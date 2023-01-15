@@ -3,11 +3,10 @@ import {
   BrowserRouter,
   Routes,
   Route,
-  Link,
 } from "react-router-dom";
 import { Navbar } from './components/Navbar';
 import { Home } from './pages/Home';
-import { Map } from './pages/Map';
+import { Version_ii } from './pages/Version_ii';
 function App() {
 
   return (
@@ -15,7 +14,7 @@ function App() {
       <Navbar/>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/map" element={<Map />} />
+        <Route path="/version-ii" element={<Version_ii />} />
       </Routes>
     </BrowserRouter>
   );
