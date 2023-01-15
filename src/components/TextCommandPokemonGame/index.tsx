@@ -106,7 +106,7 @@ const TextCommandPokemonGame: React.FC<TextCommandPokemonGameProps> = (props) =>
           <button data-testid="move-button" className="bg-red-500 px-4 text-white rounded ml-2 h-10 flex items-center justify-center" onClick={() => handleMovement(sequence)} >Submit</button>
         </div>
         <div className="flex w-full md:gap-20 gap-10 justify-center my-2" >
-        <p>Current position: X: {charState.x}, Y: {charState.y}</p>
+        <p data-testid="char-position" >Current position: X: {charState.x}, Y: {charState.y}</p>
         <p data-testid="caught-pokemons" className="" >Caught Pokemon: {charState.caughtPokemon}</p>
         </div>
   
