@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/text-pokemon-game/static/css/main.ee47ddbc.css",
-    "main.js": "/text-pokemon-game/static/js/main.5896101b.js",
+    "main.js": "/text-pokemon-game/static/js/main.4c794cbe.js",
     "static/media/pkm_banner.jpeg": "/text-pokemon-game/static/media/pkm_banner.e484f4228d727774e625.jpeg",
     "index.html": "/text-pokemon-game/index.html",
     "main.ee47ddbc.css.map": "/text-pokemon-game/static/css/main.ee47ddbc.css.map",
-    "main.5896101b.js.map": "/text-pokemon-game/static/js/main.5896101b.js.map"
+    "main.4c794cbe.js.map": "/text-pokemon-game/static/js/main.4c794cbe.js.map"
   },
   "entrypoints": [
     "static/css/main.ee47ddbc.css",
-    "static/js/main.5896101b.js"
+    "static/js/main.4c794cbe.js"
   ]
 }
